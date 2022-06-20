@@ -1,31 +1,17 @@
 import React from "react";
-import { Link, Navigate } from "react-router-dom";
-import * as auth from "../utils/auth";
+import { Link } from "react-router-dom";
 
-export default function Register(props) {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [message, setMessage] = React.useState("");
-
-  function handleSubmit(evt) {
-    evt.preventDefault();
-    if (!email || !password) {
-      console.log("registration error");
-      auth.signup(email, password).then((res) => {
-        if (res) {
-          setMessage("");
-          Navigate("/login");
-        } else {
-          setMessage("invalid user name or password");
-        }
-      });
-    }
-  };
-
+export default function Register({
+  email,
+  password,
+  handleRegistration,
+  handleEmail,
+  handlePassword,
+}) {
   return (
     <div className="login">
       <h1 className="login__title">Sign Up</h1>
-      <form className="login__form" onSubmit={handleSubmit}>
+      <form className="login__form" onSubmit={handleRegistration}>
         <input
           className="login__input"
           name="email"
@@ -33,7 +19,7 @@ export default function Register(props) {
           required
           type="email"
           value={email}
-          onChange={(evt) => setEmail(evt.target.value)}
+          onChange={handleEmail}
         ></input>
         <input
           className="login__input"
@@ -42,7 +28,7 @@ export default function Register(props) {
           required
           type="password"
           value={password}
-          onChange={(evt) => setPassword(evt.target.value)}
+          onChange={handlePassword}
         ></input>
         <button className="login__button" type="submit">
           Sign Up

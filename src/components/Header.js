@@ -14,39 +14,38 @@ function Header(props, isLoggedIn, openMobileMenu) {
         src={logo}
         alt="Around the USA logo"
       />
-{/* 
 
-      <div className="header__menu">
-        <p className="header__user-email">{props.email} displayUserEmail</p>
-       
+<div className="header__menu">
 
-        {
+
+          <div className="header__user-email">{props.email} displayUserEmail</div>
+
+
+          {userLocation === "/signin" ? (
+        <Link to="/signup" className="header__page-link">
+          Sign up
+        </Link>
+      ) : (
+        <Link to="/signin" className="header__page-link">
+          Log in
+        </Link>
+      )}
+
+
+
+</div>
+
+
+      {/* {isLoggedIn && (
         
-        isLoggedIn ?
-          <>
-            {
-              isMenuOpen ?
-                <button className="menu__close" type="button" onClick={closeMenu}>&#10005;</button> :
-                <img className="header__mobile-menu" src={mobileMenuIcon} alt="mobile menu" onClick={openMobileMenu} />
-            }
-          </> :  
-                
-        <>
-        {
-        (userLocation === "/signin") ? 
-          <Link to="/signup" className="header__page-link">
-            Sign up
-          </Link>
-         : 
-          <>
-            <Link to="/signin" className="header__page-link">
-              Log in
-            </Link>
-        }
-          </>
-        } */}
 
-      {/* </div> */}
+        
+      )  } */}
+      
+      
+
+
+      
     </header>
   );
 }

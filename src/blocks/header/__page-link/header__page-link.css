@@ -2,8 +2,15 @@
     font-family: 'Inter';
     font-weight: 400;
     font-size: 18px;
-    line-height: 1.2;
     color: #A9A9A9;
     text-decoration: none;
-    margin: 0 auto 40px;
   }
+
+  .header__page-link:hover{
+    opacity: 0.6;
+  }
+
+  @media screen and (max-width:480px) {
+    .header__page-link {
+    margin: 0;    }
+}

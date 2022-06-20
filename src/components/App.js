@@ -1,5 +1,6 @@
 import React from "react";
-import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
+import { Route, Routes, Navigate, useNavigate, Link } from "react-router-dom";
+//Use Routes instead of Switch in react-router v6
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -12,7 +13,7 @@ import Login from "./Login";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
 import InfoTooltip from "./InfoTooltip";
-import * as auth from "../utils/auth";
+import auth from "../utils/auth";
 import api from "../utils/Api";
 import CurrentUserContext from "../contexts/CurrentUserContext";
 
@@ -33,77 +34,104 @@ export default function App() {
 
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
   const [isRegistered, setIsRegistered] = React.useState(false);
-  const [loggdIn, setLoggdIn] = React.useState(false);
-  // const [email, setEmail] = React.useState("");
-  // const [password, setPassword] = React.useState("");
-    const [mobileMenu, setMobileMenu] = React.useState(false);
-
+  const [loggdIn, setLoggedIn] = React.useState(false);
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [mobileMenu, setMobileMenu] = React.useState(false);
 
   const navigate = useNavigate();
 
-  //**----------->> USER AUTH <<--------*/
+  //**----------->> AUTH <<--------*/
 
-  //register
-  function handleRegistration(email, password) {
+  // register
+  function handleRegistration(evt) {
+    evt.preventDefault();
+    try {
+      auth
+        .signup(email, password)
+        .then(() => {
+          navigate.push("/");
+          setIsRegistered(true);
+        })
+        .catch((err) => {
+          console.log(err.status, err.statusText);
+          setIsRegistered(false);
+        });
+    } finally {
+      setIsInfoTooltipOpen(true);
+    }
+  }
+
+  // check if user token valid
+  React.useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (jwt) {
+      auth
+        .tokenCheck(jwt)
+        .getContent(jwt)
+        .then((res) => {
+          if (res) {
+            const userData = {
+              email: res.userData.email,
+              id: res.userData._id,
+            };
+            setLoggedIn(true);
+            navigate.push("/");
+          }
+        })
+        .catch((err) => console.error(err.status, err.statusText));
+    }
+  }, []);
+
+  // login ??????????????????????????????????????????????????????
+  function handleLogin(evt) {
+        evt.preventDefault();
     auth
-      .signup(email, password)
-      .checkToken()
+      .signin(email, password)
+      .getContent()
       .then(() => {
-        setIsRegistered(true);
+        setLoggedIn(true);
+        navigate.push("/");
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
-        setIsRegistered(false);
-      })
-      .finally(() => {
-        setIsInfoTooltipOpen(true);
       });
   }
 
-  //login
-  function handleLogin() {
-    auth
-      .checkToken()
-      .then(() => {
-        setLoggdIn(true);
-      })
-      .catch((err) => {
-        console.log(err.status, err.statusText);
-      });
-  }
-
-  //logout
+  // logout
   function handleLogout() {
     localStorage.removeItem("jwt");
-    setLoggdIn(false);
-    navigate.push("/signin");
+    setLoggedIn(false);
+    setEmail("");
+    navigate.push("/.signin"); //???????????????????
   }
 
-  // **----------->> HANDLE AUTH <<-------------------*/
+  function handleMobileMenu() {
+    if (!mobileMenu) {
+      setMobileMenu(true);
+    } else {
+      setMobileMenu(false);
+    }
+  }
 
+  //put where???????????????????
+  function handleEmail(evt) {
+    setEmail(evt.target.value);
+  }
+
+  //put where???????????????????
+  function handlePassword(evt) {
+    setPassword(evt.target.value);
+  }
+
+  //put where???????????????????
   function handleInfoTooltipClose() {
     setIsInfoTooltipOpen(true);
     setIsRegistered(false);
   }
 
-  // function handleEmail(evt) {
-  //   setEmail(evt.target.value);
-  // }
-
-  // function handlePassword(evt) {
-  //   setPassword(evt.target.value);
-  // }
-
-  function handleMobileMenu() {
-    if (!mobileMenu) { 
-      setMobileMenu(true);
-    } else {
-      setMobileMenu(false)
-    }
-    
-  }
   //**----------->> API <<-------------------*/
-
+  //??????????????????????????????????????????????????
   React.useEffect(() => {
     api
       .getData()
@@ -201,7 +229,7 @@ export default function App() {
       });
   }
 
-  //**----------->> HANDLE POPUPS <<-------------------*/
+  // **----------->> HANDLE POPUPS <<-------------------*/
 
   function handleCardClick(card) {
     setSelectedCard(card);
@@ -232,8 +260,7 @@ export default function App() {
 
     setIsInfoTooltipOpen(false);
 
-    setMobileMenu(false)
-
+    setMobileMenu(false);
   }
 
   React.useEffect(() => {
@@ -253,22 +280,45 @@ export default function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header 
-        handleLogout={handleLogout} 
-        setLoggedIn={setLoggdIn} 
-        isOpen={setMobileMenu}
-        handleMobileMenu={handleMobileMenu}
-
+        <Header
+          handleLogout={handleLogout}
+          loggdIn={loggdIn}
+          isOpen={setMobileMenu}
+          // handleMobileMenu={handleMobileMenu}
         />
-        <Register handleRegistration={handleRegistration} />
-        <Login 
-        handleLogin={handleLogin} 
-/>
-        <div className="main">
-          {/* </Route>  */}
 
-          {/* <ProtectedRoute redirectPath="/signin" */}
-          {/* loggdIn={loggdIn}> */}
+        <div className="main">
+          <Routes>
+            <Route
+              path="/signin"
+              element={
+                <Login
+                  email={email}
+                  password={password}
+                  setEmail={setEmail}
+                  setLoggedIn={setLoggedIn}
+                  handleLogin={handleLogin}
+                  handleEmail={handleEmail}
+                  handlePassword={handlePassword}
+                />
+              }
+            ></Route>
+
+            <Route
+              path="/signup"
+              element={<Register handleRegistration={handleRegistration} />}
+            ></Route>
+
+            <Route
+              path="/"
+              element={<ProtectedRoute exact path="/"></ProtectedRoute>}
+            >
+              <Route
+                path="*"
+                element={<p>There's nothing here: 404!</p>}
+              ></Route>
+            </Route>
+          </Routes>
           <Main
             onEditProfileClick={handleEditProfileClick}
             onAddPlaceClick={handleAddPlaceClick}
@@ -278,13 +328,7 @@ export default function App() {
             onCardLike={handleCardLike}
             onCardDelete={handleCardDelete}
           />
-          {/* </ProtectedRoute> */}
 
-          {/* <Route>
-            {loggdIn ? <Navigate to="/" /> : <Navigate to="/signin" />}
-          </Route> */}
-
-          
           <EditProfilePopup
             isOpen={isEditProfilePopupOpen}
             onClose={closeAllPopups}
@@ -316,14 +360,14 @@ export default function App() {
             imageLink={selectedCard.link}
             imageText={selectedCard.name}
           />
-          
+
           <InfoTooltip
             name="tooltip"
             isOpen={isInfoTooltipOpen}
             onClose={handleInfoTooltipClose}
             isRegistered={isRegistered}
           />
-          
+
           <Footer />
         </div>
       </div>
