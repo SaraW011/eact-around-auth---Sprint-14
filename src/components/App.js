@@ -75,7 +75,7 @@ export default function App() {
       auth
         .getToken(jwt)
         .then((res) => {
-          if (res) {
+          // if (res) {
             // const userData = {
             //   email: res.userData.email,
             //   id: res.userData._id,
