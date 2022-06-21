@@ -47,7 +47,7 @@ export default function App() {
   function handleRegistration(evt) {
     evt.preventDefault()
     auth
-      .signup(email, password)
+      .signup({email, password})
       .then((res) => {
         if (res.email === email) {
         setIsRegistered(true);
@@ -64,6 +64,7 @@ export default function App() {
 
   
   // check jwt token validation
+  //is f necessary?
   React.useEffect(() => {
     tokenCheck();
   }, []);
@@ -94,7 +95,7 @@ export default function App() {
     auth
       .signin(email, password)
       .then((data) => {
-        if (data.token) {
+        if (data.jwt) {
           localStorage.setItem("jwt", data.jwt);
         }
         
