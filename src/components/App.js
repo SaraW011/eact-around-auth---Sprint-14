@@ -75,11 +75,11 @@ export default function App() {
       auth
         .getToken(jwt)
         .then((res) => {
-          // if (res) {
-            // const userData = {
-            //   email: res.userData.email,
-            //   id: res.userData._id,
-            // };
+          if (res) {
+            const userData = {
+              email: res.userData.email,
+              id: res.userData._id,
+            };
             setEmail(res.email);
             setLoggedIn(true);
             navigate.push("/");
