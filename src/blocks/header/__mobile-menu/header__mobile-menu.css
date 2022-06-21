@@ -1,14 +1,10 @@
 .header__mobile-menu {
-    display: inline-block;
-    cursor: pointer;
-    
-   }
-   
-   @media screen and (max-width:480px) {
-     .header__mobile-menu {
-        display: block;
+  display: inline-block;
+  cursor: pointer;
+    }
 
-     }
-   }
-   
-   
+.header__mobile-menu_hide {
+  display: none;
+    }
+    
+    

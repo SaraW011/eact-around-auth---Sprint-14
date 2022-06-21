@@ -4,7 +4,7 @@
     margin-bottom: 40px;
     grid-gap: 24px;
     justify-content: flex-end;
-    align-self: flex-end;
+    align-items: center;
   }
   
   @media screen and (max-width: 860px) {

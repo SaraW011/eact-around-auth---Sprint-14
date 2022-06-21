@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes, Navigate, useNavigate, Link } from "react-router-dom";
+import { Route, Routes, useNavigate, Navigate } from "react-router-dom";
 //Use Routes instead of Switch in react-router v6
 import Header from "./Header";
 import Main from "./Main";
@@ -45,53 +45,63 @@ export default function App() {
 
   // register
   function handleRegistration(evt) {
-    evt.preventDefault();
-    try {
-      auth
-        .signup(email, password)
-        .then(() => {
-          navigate.push("/");
-          setIsRegistered(true);
-        })
-        .catch((err) => {
-          console.log(err.status, err.statusText);
-          setIsRegistered(false);
-        });
-    } finally {
-      setIsInfoTooltipOpen(true);
-    }
+    evt.preventDefault()
+    auth
+      .signup(email, password)
+      .then((res) => {
+        if (res.email === email) {
+        setIsRegistered(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err.status, err.statusText);
+        setIsRegistered(false);
+      })
+      .finally(() => {
+        setIsInfoTooltipOpen(true);
+      });
   }
 
-  // check if user token valid
+  
+  // check jwt token validation
   React.useEffect(() => {
+    tokenCheck();
+  }, []);
+
+  function tokenCheck() {
     const jwt = localStorage.getItem("jwt");
     if (jwt) {
       auth
-        .tokenCheck(jwt)
-        .getContent(jwt)
+        .getToken(jwt)
         .then((res) => {
           if (res) {
-            const userData = {
-              email: res.userData.email,
-              id: res.userData._id,
-            };
+            // const userData = {
+            //   email: res.userData.email,
+            //   id: res.userData._id,
+            // };
+            setEmail(res.email);
             setLoggedIn(true);
             navigate.push("/");
           }
         })
         .catch((err) => console.error(err.status, err.statusText));
     }
-  }, []);
+  }
 
-  // login ??????????????????????????????????????????????????????
+  // login 
   function handleLogin(evt) {
-        evt.preventDefault();
+    evt.preventDefault();
     auth
       .signin(email, password)
-      .getContent()
+      .then((data) => {
+        if (data.token) {
+          localStorage.setItem("jwt", data.jwt);
+        }
+        
+      })
       .then(() => {
         setLoggedIn(true);
-        navigate.push("/");
+        navigate.push("/")
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
@@ -103,7 +113,7 @@ export default function App() {
     localStorage.removeItem("jwt");
     setLoggedIn(false);
     setEmail("");
-    navigate.push("/.signin"); //???????????????????
+    navigate.push("/signin");
   }
 
   function handleMobileMenu() {
@@ -114,29 +124,30 @@ export default function App() {
     }
   }
 
-  //put where???????????????????
   function handleEmail(evt) {
     setEmail(evt.target.value);
   }
 
-  //put where???????????????????
   function handlePassword(evt) {
     setPassword(evt.target.value);
   }
 
-  //put where???????????????????
   function handleInfoTooltipClose() {
     setIsInfoTooltipOpen(true);
     setIsRegistered(false);
   }
 
   //**----------->> API <<-------------------*/
-  //??????????????????????????????????????????????????
   React.useEffect(() => {
     api
       .getData()
       .then((data) => {
-        setCurrentUser(data);
+        if (data.email){
+          setLoggedIn(true)
+          setCurrentUser(data);
+          setEmail(data.email)
+          navigate.push("/")
+        }
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
@@ -280,15 +291,27 @@ export default function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header
-          handleLogout={handleLogout}
-          loggdIn={loggdIn}
-          isOpen={setMobileMenu}
-          // handleMobileMenu={handleMobileMenu}
+        <Header          
+        email={email}
+        handleLogout={handleLogout}
+        openMobileMenu={handleMobileMenu}
+        isOpen={setMobileMenu}
+        loggdIn={loggdIn}
         />
-
         <div className="main">
           <Routes>
+            <Route
+              path="/signup"
+              element={
+              <Register 
+              email={email}
+              password={password}
+              handleRegistration={handleRegistration} 
+              handleEmail={handleEmail}
+              handlePassword={handlePassword}
+              />}
+            ></Route>
+
             <Route
               path="/signin"
               element={
@@ -305,31 +328,20 @@ export default function App() {
             ></Route>
 
             <Route
-              path="/signup"
-              element={<Register handleRegistration={handleRegistration} />}
-            ></Route>
+              element={
+                <ProtectedRoute exact path="/">
+                  <Main
+                    onEditProfileClick={handleEditProfileClick}
+                    onAddPlaceClick={handleAddPlaceClick}
+                    onEditAvatarClick={handleEditAvatarClick}
+                    onCardClick={handleCardClick}
+                    cards={cards}
+                    onCardLike={handleCardLike}
+                    onCardDelete={handleCardDelete}
+                  />
 
-            <Route
-              path="/"
-              element={<ProtectedRoute exact path="/"></ProtectedRoute>}
-            >
-              <Route
-                path="*"
-                element={<p>There's nothing here: 404!</p>}
-              ></Route>
-            </Route>
-          </Routes>
-          <Main
-            onEditProfileClick={handleEditProfileClick}
-            onAddPlaceClick={handleAddPlaceClick}
-            onEditAvatarClick={handleEditAvatarClick}
-            onCardClick={handleCardClick}
-            cards={cards}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
-          />
 
-          <EditProfilePopup
+<EditProfilePopup
             isOpen={isEditProfilePopupOpen}
             onClose={closeAllPopups}
             onUpdateUser={handleUpdateUser}
@@ -368,7 +380,19 @@ export default function App() {
             isRegistered={isRegistered}
           />
 
+
+
+
+                </ProtectedRoute>
+              }
+            ></Route>
+
+            <Route path="*" element={<Navigate to="/signup" replace />}></Route>
+            
+          </Routes>
           <Footer />
+
+         
         </div>
       </div>
     </CurrentUserContext.Provider>
