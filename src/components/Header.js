@@ -1,6 +1,6 @@
 import React from "react";
 import logo from "../images/logo.svg";
-import mobileMenuIcon from "../images/mobile-menu.svg";
+// import mobileMenuIcon from "../images/mobile-menu.svg";
 import { Link, useLocation } from "react-router-dom";
 
 function Header({props, email, isLoggedIn, handleLogout, openMobileMenu}) {

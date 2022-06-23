@@ -34,9 +34,9 @@ export default function App() {
 
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
   const [isRegistered, setIsRegistered] = React.useState(false);
-  const [loggdIn, setLoggedIn] = React.useState(false);
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [loggdIn, setLoggedIn] = React.useState(true);
+  // const [email, setEmail] = React.useState("");
+  // const [password, setPassword] = React.useState("");
   const [mobileMenu, setMobileMenu] = React.useState(false);
 
   const navigate = useNavigate();
@@ -44,14 +44,13 @@ export default function App() {
   //**----------->> AUTH <<--------*/
 
   // register
-  function handleRegistration(evt) {
-    evt.preventDefault()
+  function handleRegistration(email, password) {
     auth
-      .signup({email, password})
-      .then((res) => {
-        if (res.email === email) {
+      .signup(email, password)
+      .then(() => {
+        // if (res.email === email) {
         setIsRegistered(true);
-        }
+        // }
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
@@ -63,35 +62,57 @@ export default function App() {
   }
 
   
-  // check jwt token validation
-  //is f necessary?
-  React.useEffect(() => {
-    tokenCheck();
-  }, []);
+  // // check jwt token validation
+  // //is f necessary?
+  // React.useEffect(() => {
+  //   tokenCheck();
+  // }, []);
 
-  function tokenCheck() {
-    const jwt = localStorage.getItem("jwt");
-    if (jwt) {
-      auth
-        .getToken(jwt)
-        .then((res) => {
-          if (res) {
-            const userData = {
-              email: res.userData.email,
-              id: res.userData._id,
-            };
-            setEmail(res.email);
-            setLoggedIn(true);
-            navigate.push("/");
-          }
-        })
-        .catch((err) => console.error(err.status, err.statusText));
-    }
-  }
+  // function tokenCheck() {
+  //   const jwt = localStorage.getItem("jwt");
+  //   if (jwt) {
+  //     auth
+  //       .getToken(jwt)
+  //       .then((res) => {
+  //         if (res) {
+  //           const userData = {
+  //             email: res.userData.email,
+  //             id: res.userData._id,
+  //           };
+  //           // setEmail(res.email);
+  //           setLoggedIn(true);
+  //           navigate.push("/");
+  //         }
+  //       })
+  //       .catch((err) => console.error(err.status, err.statusText));
+  //   }
+  // }
 
+// check jwt token validation CORS
+//   is f necessary?
+  // React.useEffect(() => {
+  //   const jwt = localStorage.getItem("jwt");
+  //   if (jwt) {
+  //     auth
+  //       .getToken(jwt)
+  //       .then((res) => {
+  //         if (res) {
+  //           const userData = {
+  //             email: res.userData.email,
+  //             id: res.userData._id,
+  //           };
+  //           // setEmail(res.email);
+  //           setLoggedIn(true);
+  //           navigate.push("/");
+  //         }
+  //       })
+  //       .catch((err) => console.error(err.status, err.statusText));
+  //   }
+  // }, []);
+
+ 
   // login 
-  function handleLogin(evt) {
-    evt.preventDefault();
+  function handleLogin(email, password) {
     auth
       .signin(email, password)
       .then((data) => {
@@ -113,7 +134,7 @@ export default function App() {
   function handleLogout() {
     localStorage.removeItem("jwt");
     setLoggedIn(false);
-    setEmail("");
+    // setEmail("");
     navigate.push("/signin");
   }
 
@@ -125,13 +146,13 @@ export default function App() {
     }
   }
 
-  function handleEmail(evt) {
-    setEmail(evt.target.value);
-  }
+  // function handleEmail(evt) {
+  //   setEmail(evt.target.value);
+  // }
 
-  function handlePassword(evt) {
-    setPassword(evt.target.value);
-  }
+  // function handlePassword(evt) {
+  //   setPassword(evt.target.value);
+  // }
 
   function handleInfoTooltipClose() {
     setIsInfoTooltipOpen(true);
@@ -144,10 +165,8 @@ export default function App() {
       .getData()
       .then((data) => {
         if (data.email){
-          setLoggedIn(true)
           setCurrentUser(data);
-          setEmail(data.email)
-          navigate.push("/")
+          // setEmail(data.email)
         }
       })
       .catch((err) => {
@@ -290,10 +309,11 @@ export default function App() {
 
   //**----------->> RENDER <<-------------------*/
   return (
-    <CurrentUserContext.Provider value={currentUser}>
+    
       <div className="page">
+        <CurrentUserContext.Provider value={currentUser}>
         <Header          
-        email={email}
+        // email={email}
         handleLogout={handleLogout}
         openMobileMenu={handleMobileMenu}
         isOpen={setMobileMenu}
@@ -305,32 +325,32 @@ export default function App() {
               path="/signup"
               element={
               <Register 
-              email={email}
-              password={password}
+              // email={email}
+              // password={password}
               handleRegistration={handleRegistration} 
-              handleEmail={handleEmail}
-              handlePassword={handlePassword}
+              // handleEmail={handleEmail}
+              // handlePassword={handlePassword}
               />}
             ></Route>
 
             <Route
-              path="/signin"
+              path="/signin" 
               element={
                 <Login
-                  email={email}
-                  password={password}
-                  setEmail={setEmail}
+                  // email={email}
+                  // password={password}
+                  // setEmail={setEmail}
                   setLoggedIn={setLoggedIn}
                   handleLogin={handleLogin}
-                  handleEmail={handleEmail}
-                  handlePassword={handlePassword}
+                  // handleEmail={handleEmail}
+                  // handlePassword={handlePassword}
                 />
               }
             ></Route>
 
             <Route
               element={
-                <ProtectedRoute exact path="/">
+                <ProtectedRoute exact path="/" loggdIn={loggdIn}>
                   <Main
                     onEditProfileClick={handleEditProfileClick}
                     onAddPlaceClick={handleAddPlaceClick}
@@ -384,7 +404,7 @@ export default function App() {
 
 
 
-                </ProtectedRoute>
+                // </ProtectedRoute>
               }
             ></Route>
 
@@ -395,7 +415,7 @@ export default function App() {
 
          
         </div>
-      </div>
     </CurrentUserContext.Provider>
+    </div>
   );
 }

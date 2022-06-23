@@ -1,17 +1,33 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function Register({
-  email,
-  password,
-  handleRegistration,
-  handleEmail,
-  handlePassword,
-}) {
+export default function Register(
+  props) {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    if (!email || !password) {
+      console.log('could not register');
+      return;
+    }
+    props.handleRegistration(email, password);
+  };
+
+  const handleEmail =(evt)=> {
+    setEmail(evt.target.value);
+  }
+
+  const handlePassword = (evt)=> {
+    setPassword(evt.target.value);
+  }
+
   return (
     <div className="login">
       <h1 className="login__title">Sign Up</h1>
-      <form className="login__form" onSubmit={handleRegistration}>
+      <form className="login__form" onSubmit={handleSubmit}>
         <input
           className="login__input"
           name="email"

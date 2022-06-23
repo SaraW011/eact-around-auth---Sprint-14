@@ -1,18 +1,33 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function Login({
-  email,
-  password,
-  handleLogin,
-  handleEmail,
-  handlePassword,
-}) {
+export default function Login(
+  props) {
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+  
+  
+    const handleSubmit = (evt) => {
+      evt.preventDefault();
+      if (!email || !password) {
+        console.log('could not log in');
+        return;
+      }
+      props.handleLogin({email, password});
+    };
+  
+    const handleEmail =(evt)=> {
+      setEmail(evt.target.value);
+    }
+  
+    const handlePassword = (evt)=> {
+      setPassword(evt.target.value);
+    }
   
   return (
     <div className="login">
       <p className="login__title">Welcome back!</p>
-      <form onSubmit={handleLogin} className="login__form">
+      <form onSubmit={handleSubmit} className="login__form">
         <input
           required
           className="login__input"
