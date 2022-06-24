@@ -20,6 +20,7 @@ export default function Main({
           <img
             className="profile__avatar"
             src={currentUser.avatar}
+            alt="My Avatar"
           />
 
           <button

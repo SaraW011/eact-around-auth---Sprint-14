@@ -10,12 +10,13 @@ function Header({props, email, isLoggedIn, handleLogout, openMobileMenu}) {
 
   return (
     <header className="header">
+       <Link className="logo" to="/">
       <img
         id="site-logo"
-        className="logo"
         src={logo}
         alt="Around the USA logo"
       />
+        </Link>
        
       <div 
       className="header__menu"

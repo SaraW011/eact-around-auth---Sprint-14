@@ -31,12 +31,10 @@ export default function App() {
   const [selectedCard, setSelectedCard] = React.useState({});
   const [cards, setCards] = React.useState([]);
   const [currentUser, setCurrentUser] = React.useState({});
-
+  const [userData, setUserData] = React.useState({});
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
   const [isRegistered, setIsRegistered] = React.useState(false);
-  const [loggdIn, setLoggedIn] = React.useState(true);
-  // const [email, setEmail] = React.useState("");
-  // const [password, setPassword] = React.useState("");
+  const [loggdIn, setLoggedIn] = React.useState(false);
   const [mobileMenu, setMobileMenu] = React.useState(false);
 
   const navigate = useNavigate();
@@ -47,10 +45,11 @@ export default function App() {
   function handleRegistration(email, password) {
     auth
       .signup(email, password)
-      .then(() => {
-        // if (res.email === email) {
-        setIsRegistered(true);
-        // }
+      .then((res) => {
+        if (res.email === email) {
+          setIsRegistered(true);
+          navigate.push("/");
+        }
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
@@ -61,7 +60,6 @@ export default function App() {
       });
   }
 
-  
   // // check jwt token validation
   // //is f necessary?
   // React.useEffect(() => {
@@ -88,42 +86,40 @@ export default function App() {
   //   }
   // }
 
-// check jwt token validation CORS
-//   is f necessary?
-  // React.useEffect(() => {
-  //   const jwt = localStorage.getItem("jwt");
-  //   if (jwt) {
-  //     auth
-  //       .getToken(jwt)
-  //       .then((res) => {
-  //         if (res) {
-  //           const userData = {
-  //             email: res.userData.email,
-  //             id: res.userData._id,
-  //           };
-  //           // setEmail(res.email);
-  //           setLoggedIn(true);
-  //           navigate.push("/");
-  //         }
-  //       })
-  //       .catch((err) => console.error(err.status, err.statusText));
-  //   }
-  // }, []);
+  // check jwt token validation CORS
+  React.useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (jwt) {
+      auth
+        .getToken(jwt)
+        .then((res) => {
+          if (res) {
+            const data = {
+              email: res.data.email,
+              id: res.data._id,
+            };
+            setLoggedIn(true);
+            setUserData(data);
+            // navigate.push("/");
+          }
+        })
+        .catch((err) => console.error(err.status, err.statusText));
+    }
+  }, []);
 
- 
-  // login 
+  // login
   function handleLogin(email, password) {
     auth
       .signin(email, password)
       .then((data) => {
-        if (data.jwt) {
-          localStorage.setItem("jwt", data.jwt);
+        if (data.token) {
+          localStorage.setItem("jwt", data.token);
         }
-        
       })
       .then(() => {
+        setUserData(userData);
         setLoggedIn(true);
-        navigate.push("/")
+        Navigate.push("/");
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
@@ -134,7 +130,6 @@ export default function App() {
   function handleLogout() {
     localStorage.removeItem("jwt");
     setLoggedIn(false);
-    // setEmail("");
     navigate.push("/signin");
   }
 
@@ -146,14 +141,6 @@ export default function App() {
     }
   }
 
-  // function handleEmail(evt) {
-  //   setEmail(evt.target.value);
-  // }
-
-  // function handlePassword(evt) {
-  //   setPassword(evt.target.value);
-  // }
-
   function handleInfoTooltipClose() {
     setIsInfoTooltipOpen(true);
     setIsRegistered(false);
@@ -164,10 +151,7 @@ export default function App() {
     api
       .getData()
       .then((data) => {
-        if (data.email){
-          setCurrentUser(data);
-          // setEmail(data.email)
-        }
+        setCurrentUser(data);
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
@@ -309,15 +293,14 @@ export default function App() {
 
   //**----------->> RENDER <<-------------------*/
   return (
-    
-      <div className="page">
-        <CurrentUserContext.Provider value={currentUser}>
-        <Header          
-        // email={email}
-        handleLogout={handleLogout}
-        openMobileMenu={handleMobileMenu}
-        isOpen={setMobileMenu}
-        loggdIn={loggdIn}
+    <div className="page">
+      <CurrentUserContext.Provider value={currentUser}>
+        <Header
+          handleLogout={handleLogout}
+          openMobileMenu={handleMobileMenu}
+          isOpen={setMobileMenu}
+          loggdIn={loggdIn}
+          email={userData.email}
         />
         <div className="main">
           <Routes>
@@ -325,32 +308,26 @@ export default function App() {
               path="/signup"
               element={
               <Register 
-              // email={email}
-              // password={password}
               handleRegistration={handleRegistration} 
-              // handleEmail={handleEmail}
-              // handlePassword={handlePassword}
               />}
             ></Route>
 
             <Route
-              path="/signin" 
+              path="/signin"
               element={
-                <Login
-                  // email={email}
-                  // password={password}
-                  // setEmail={setEmail}
-                  setLoggedIn={setLoggedIn}
-                  handleLogin={handleLogin}
-                  // handleEmail={handleEmail}
-                  // handlePassword={handlePassword}
+                <Login 
+                handleLogin={handleLogin} 
+                setLoggedIn={setLoggedIn} 
                 />
               }
             ></Route>
 
-            <Route
+            <Route path="/"
               element={
-                <ProtectedRoute exact path="/" loggdIn={loggdIn}>
+                // <ProtectedRoute
+                //   // component={Main}
+                //   loggdIn={loggdIn}
+                // >
                   <Main
                     onEditProfileClick={handleEditProfileClick}
                     onAddPlaceClick={handleAddPlaceClick}
@@ -360,32 +337,33 @@ export default function App() {
                     onCardLike={handleCardLike}
                     onCardDelete={handleCardDelete}
                   />
+              //   </ProtectedRoute>
+              }
+              ></Route>
 
+            <Route path="*" element={<Navigate to="/signup" replace />}></Route>
+          </Routes>
 
-<EditProfilePopup
+          <EditProfilePopup
             isOpen={isEditProfilePopupOpen}
             onClose={closeAllPopups}
             onUpdateUser={handleUpdateUser}
           />
-
           <EditAvatarPopup
             isOpen={isEditAvatarPopupOpen}
             onClose={closeAllPopups}
             onUpdateAvatar={handleUpdateAvatar}
           />
-
           <AddPlacePopup
             isOpen={isAddPlacePopupOpen}
             onClose={closeAllPopups}
             onAddPlaceSubmit={handleAddPlaceSubmit}
           />
-
           <ConfirmDeletePopup
             isOpen={isDeleteImagePopupOpen}
             onClose={closeAllPopups}
             onSubmit={handleDeletePlaceClick}
           />
-
           <ImagePopup
             name="preview-image"
             onClose={closeAllPopups}
@@ -393,7 +371,6 @@ export default function App() {
             imageLink={selectedCard.link}
             imageText={selectedCard.name}
           />
-
           <InfoTooltip
             name="tooltip"
             isOpen={isInfoTooltipOpen}
@@ -401,21 +378,9 @@ export default function App() {
             isRegistered={isRegistered}
           />
 
-
-
-
-                // </ProtectedRoute>
-              }
-            ></Route>
-
-            <Route path="*" element={<Navigate to="/signup" replace />}></Route>
-            
-          </Routes>
           <Footer />
-
-         
         </div>
-    </CurrentUserContext.Provider>
+      </CurrentUserContext.Provider>
     </div>
   );
 }

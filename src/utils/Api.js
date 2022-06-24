@@ -11,11 +11,10 @@ checkResponse = (res) => {
   if (res.ok) {
     return res.json();
   } else {
-    return Promise.reject(res),
-    console.log("Error Type:", 
-    res.status, res.statusText);
+    return Promise.reject(`Error Type: 
+    ${res.status} ${res.statusText}`);
+    }
   }
-}
   
   // 1. Loading user information from the server
   async getData() {

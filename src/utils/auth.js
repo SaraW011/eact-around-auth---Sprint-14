@@ -12,7 +12,7 @@ class Auth {
     }
   }
 
-  signup =(email, password) => {
+  signup = (email, password) => {
     return fetch(`${this._BASE_URL}/signup`, {
       method: "POST",
       headers: {
@@ -20,10 +20,9 @@ class Auth {
       },
       body: JSON.stringify({ email, password }),
     }).then(this.checkResponse);
-  }
+  };
 
-
-  signin = (email, password)=> {
+  signin = (email, password) => {
     return fetch(`${this._BASE_URL}/signin`, {
       method: "POST",
       headers: {
@@ -33,12 +32,12 @@ class Auth {
     })
       .then(this.checkResponse)
       .then((data) => {
-          localStorage.setItem("jwt", data.jwt);
-          return data;
+        localStorage.setItem("jwt", data.jwt);
+        return data;
       });
-  }
+  };
 
-  getToken =(token)=> {
+  getToken = (token) => {
     return fetch(`${this._BASE_URL}/users/me`, {
       method: "GET",
       headers: {
@@ -49,7 +48,7 @@ class Auth {
     })
       .then(this.checkResponse)
       .then((data) => data);
-  }
+  };
 }
 
 const auth = new Auth({ BASE_URL: "https://register.nomoreparties.co" });
