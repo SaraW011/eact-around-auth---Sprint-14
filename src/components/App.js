@@ -141,10 +141,10 @@ export default function App() {
     }
   }
 
-  function handleInfoTooltipClose() {
-    setIsInfoTooltipOpen(true);
-    setIsRegistered(false);
-  }
+  // function handleInfoTooltipClose() {
+  //   setIsInfoTooltipOpen(false);
+  //   setIsRegistered(false);
+  // }
 
   //**----------->> API <<-------------------*/
   React.useEffect(() => {
@@ -219,13 +219,14 @@ export default function App() {
     }
   }
 
-  function handleCardDelete(card) {
+  function handleCardDelete() {
     api
-      .deleteCard(card._id)
+      .deleteCard(selectedCard._id)
       .then(() => {
         setCards((state) =>
-          state.filter((currentCard) => currentCard._id !== card._id)
+          state.filter((currentCard) => currentCard._id !== selectedCard._id)
         );
+        closeAllPopups();
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
@@ -260,8 +261,9 @@ export default function App() {
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
   }
-  function handleDeletePlaceClick() {
+  function handleDeletePlaceClick(card) {
     setIsDeleteImagePopupOpen(true);
+    setSelectedCard(card)
   }
 
   function closeAllPopups() {
@@ -271,9 +273,9 @@ export default function App() {
     setIsPreviewImageOpen(false);
     setIsDeleteImagePopupOpen(false);
 
-    setSelectedCard({});
-
     setIsInfoTooltipOpen(false);
+
+    setSelectedCard({});
 
     setMobileMenu(false);
   }
@@ -291,18 +293,21 @@ export default function App() {
     return () => document.removeEventListener("keydown", handleEscClose);
   }, []); // dependencies array
 
+
   //**----------->> RENDER <<-------------------*/
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
+      
+      <div className="main">
+
         <Header
           handleLogout={handleLogout}
-          openMobileMenu={handleMobileMenu}
+          showMobileIcon={handleMobileMenu}
           isOpen={setMobileMenu}
           loggdIn={loggdIn}
           email={userData.email}
         />
-        <div className="main">
           <Routes>
             <Route
               path="/signup"
@@ -335,9 +340,9 @@ export default function App() {
                     onCardClick={handleCardClick}
                     cards={cards}
                     onCardLike={handleCardLike}
-                    onCardDelete={handleCardDelete}
+                    onCardDelete={handleDeletePlaceClick}
                   />
-              //   </ProtectedRoute>
+                // </ProtectedRoute>
               }
               ></Route>
 
@@ -362,7 +367,9 @@ export default function App() {
           <ConfirmDeletePopup
             isOpen={isDeleteImagePopupOpen}
             onClose={closeAllPopups}
-            onSubmit={handleDeletePlaceClick}
+            onSubmit={handleCardDelete}
+            // onSubmit={handleDeletePlaceClick}
+            // onCardDelete={handleCardDelete}
           />
           <ImagePopup
             name="preview-image"
@@ -374,7 +381,8 @@ export default function App() {
           <InfoTooltip
             name="tooltip"
             isOpen={isInfoTooltipOpen}
-            onClose={handleInfoTooltipClose}
+            // onClose={handleInfoTooltipClose}
+            onClose = {closeAllPopups}
             isRegistered={isRegistered}
           />
 

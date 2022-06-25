@@ -1,7 +1,6 @@
 .header__menu {
     display: inline-flex;
     flex-direction: row;
-    margin-bottom: 40px;
     grid-gap: 24px;
     justify-content: flex-end;
     align-items: center;

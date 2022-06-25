@@ -1,45 +1,60 @@
 import React from "react";
 import logo from "../images/logo.svg";
-// import mobileMenuIcon from "../images/mobile-menu.svg";
+import mobileMenuIcon from "../images/mobile-menu.svg";
 import { Link, useLocation } from "react-router-dom";
 
-function Header({props, email, isLoggedIn, handleLogout, openMobileMenu}) {
-  
-  
+function Header({
+  props,
+  isOpen,
+  loggdIn,
+  handleLogout,
+  email,
+  mobileMenu,
+  showMobileIcon,
+}) {
   const userLocation = useLocation().pathname;
 
   return (
     <header className="header">
-       <Link className="logo" to="/">
-      <img
-        id="site-logo"
-        src={logo}
-        alt="Around the USA logo"
-      />
-        </Link>
-       
-      <div 
-      className="header__menu"
-      // email={email}
-      // isLoggedIn={isLoggedIn}
-      // handleLogout={handleLogout}
-      >
-      <h2 className="header__user-email">{email}</h2>
+      <Link className="logo" to="/">
+        <img id="site-logo" src={logo} alt="Around the USA logo" />
+      </Link>
 
-
-
-        {userLocation === "/signin" ? (
-          <Link to="/signup" className="header__page-link">
-            Sign up
+      {loggdIn ? (
+        <div
+          className="header__menu"
+          // className={`header__menu ${isOpen && "header__mobile-menu"}`}
+          loggdIn={loggdIn}
+          handleLogout={handleLogout}
+          email={email}
+        >
+          <h2 className="header__user-email">{email}</h2>
+          <Link
+            className="header__page-link"
+            to="/signin"
+            onClick={handleLogout}
+          >
+            Log out
           </Link>
-        ) : (
-          <Link to="/signin" className="header__page-link">
-            Log in
-          </Link>
-        )}
-      </div>
+        </div>
+      ) : (
+        <>
+          {userLocation === "/signin" ? (
 
-      {/* {isLoggedIn && openMobileMenu && <img
+            <Link to="/signup" className="header__page-link">
+              Sign up
+            </Link>
+          ) : (
+            <Link to="/signin" className="header__page-link">
+              Log in
+            </Link>
+          )}
+
+          </>
+
+      )}
+
+      {/* {loggdIn && showMobileIcon && <img
         id="mobile-menu"
         className="header__mobile-menu"
         src={mobileMenuIcon}
@@ -47,7 +62,6 @@ function Header({props, email, isLoggedIn, handleLogout, openMobileMenu}) {
         onClick={props.handleMobileMenu}
       />
         } */}
-
     </header>
   );
 }

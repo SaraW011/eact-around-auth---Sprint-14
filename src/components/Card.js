@@ -22,7 +22,7 @@ export default function Card({ onCardClick, card, onCardLike, onCardDelete }) {
 
   // Creating a variable which you'll then set in `className` for the delete button
   const cardDeleteButtonClassName = `elements__trash ${
-    isOwn ? "elements__trash" : ""   //elements__trash_disabled  --> for owner card
+    isOwn ? "elements__trash" : "elements__trash_disabled"   //--> for owner card
   }`;
 
   
@@ -61,7 +61,7 @@ export default function Card({ onCardClick, card, onCardLike, onCardDelete }) {
             onClick={handleLikeClick}
           ></button>
 
-          <div className="elements__number-of-likes"></div>
+          <div className="elements__number-of-likes">{card.likes.length}</div>
         </div>
       </div>
     </li>
