@@ -40,6 +40,7 @@ export default function AddPlacePopup(props) {
     >
       <input
         onChange={handleCardNameUpdate}
+        value={cardName || ''}
         id="input_type_place"
         type="text"
         className="form__input form__input_type_place"
@@ -52,6 +53,7 @@ export default function AddPlacePopup(props) {
       <span id="input_type_place-error" className="form__error"></span>
       <input
         onChange={handleCardLinkUpdate}
+        value={cardLink || ''}
         id="input_type_url"
         type="url"
         className="form__input form__input_type_link"
