@@ -34,8 +34,8 @@ export default function App() {
   const [userData, setUserData] = React.useState({});
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
   const [isRegistered, setIsRegistered] = React.useState(false);
-  const [loggdIn, setLoggedIn] = React.useState(false);
-  const [mobileMenu, setMobileMenu] = React.useState(false);
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  // const [mobileMenu, setMobileMenu] = React.useState(false);
 
   const navigate = useNavigate();
 
@@ -60,33 +60,7 @@ export default function App() {
       });
   }
 
-  // // check jwt token validation
-  // //is f necessary?
-  // React.useEffect(() => {
-  //   tokenCheck();
-  // }, []);
-
-  // function tokenCheck() {
-  //   const jwt = localStorage.getItem("jwt");
-  //   if (jwt) {
-  //     auth
-  //       .getToken(jwt)
-  //       .then((res) => {
-  //         if (res) {
-  //           const userData = {
-  //             email: res.userData.email,
-  //             id: res.userData._id,
-  //           };
-  //           // setEmail(res.email);
-  //           setLoggedIn(true);
-  //           navigate.push("/");
-  //         }
-  //       })
-  //       .catch((err) => console.error(err.status, err.statusText));
-  //   }
-  // }
-
-  // check jwt token validation CORS
+  // check jwt token validation
   React.useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (jwt) {
@@ -100,7 +74,6 @@ export default function App() {
             };
             setLoggedIn(true);
             setUserData(data);
-            // navigate.push("/");
           }
         })
         .catch((err) => console.error(err.status, err.statusText));
@@ -119,31 +92,33 @@ export default function App() {
       .then(() => {
         setUserData(userData);
         setLoggedIn(true);
-        Navigate.push("/");
+        navigate.push("/");
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
+        setIsRegistered(false);
       });
   }
+
+  React.useEffect(() => {
+    if (loggedIn) {
+      navigate("/");
+    }
+  }, [loggedIn]);
 
   // logout
   function handleLogout() {
     localStorage.removeItem("jwt");
     setLoggedIn(false);
-    navigate.push("/signin");
+    navigate("/signin");
   }
 
-  function handleMobileMenu() {
-    if (!mobileMenu) {
-      setMobileMenu(true);
-    } else {
-      setMobileMenu(false);
-    }
-  }
-
-  // function handleInfoTooltipClose() {
-  //   setIsInfoTooltipOpen(false);
-  //   setIsRegistered(false);
+  // function handleMobileMenu() {
+  //   if (!mobileMenu) {
+  //     setMobileMenu(true);
+  //   } else {
+  //     setMobileMenu(false);
+  //   }
   // }
 
   //**----------->> API <<-------------------*/
@@ -263,7 +238,7 @@ export default function App() {
   }
   function handleDeletePlaceClick(card) {
     setIsDeleteImagePopupOpen(true);
-    setSelectedCard(card)
+    setSelectedCard(card);
   }
 
   function closeAllPopups() {
@@ -277,7 +252,7 @@ export default function App() {
 
     setSelectedCard({});
 
-    setMobileMenu(false);
+    // setMobileMenu(false);
   }
 
   React.useEffect(() => {
@@ -293,47 +268,32 @@ export default function App() {
     return () => document.removeEventListener("keydown", handleEscClose);
   }, []); // dependencies array
 
-
   //**----------->> RENDER <<-------------------*/
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
-      
-      <div className="main">
+        <div className="main">
+          <Header
+            // showMobileIcon={handleMobileMenu}
+            // isOpen={setMobileMenu}
+            loggedIn={loggedIn}
+            email={userData.email}
+            handleLogout={handleLogout}
+          />
 
-        <Header
-          handleLogout={handleLogout}
-          showMobileIcon={handleMobileMenu}
-          isOpen={setMobileMenu}
-          loggdIn={loggdIn}
-          email={userData.email}
-        />
           <Routes>
             <Route
               path="/signup"
-              element={
-              <Register 
-              handleRegistration={handleRegistration} 
-              />}
+              element={<Register handleRegistration={handleRegistration} />}
             ></Route>
 
-            <Route
-              path="/signin"
-              element={
-                <Login 
-                handleLogin={handleLogin} 
-                setLoggedIn={setLoggedIn} 
-                />
-              }
-            ></Route>
-
-            <Route path="/"
-              element={
-                // <ProtectedRoute
-                //   // component={Main}
-                //   loggdIn={loggdIn}
-                // >
-                  <Main
+            {loggedIn ? (
+              <Route
+                element={
+                  <ProtectedRoute
+                    path="/"
+                    loggedIn={loggedIn}
+                    component={Main}
                     onEditProfileClick={handleEditProfileClick}
                     onAddPlaceClick={handleAddPlaceClick}
                     onEditAvatarClick={handleEditAvatarClick}
@@ -341,12 +301,17 @@ export default function App() {
                     cards={cards}
                     onCardLike={handleCardLike}
                     onCardDelete={handleDeletePlaceClick}
-                  />
-                // </ProtectedRoute>
-              }
+                  ></ProtectedRoute>
+                }
+              />
+            ) : (
+              <Route
+                path="/signin"
+                element={<Login handleLogin={handleLogin} />}
               ></Route>
+            )}
 
-            <Route path="*" element={<Navigate to="/signup" replace />}></Route>
+            {/* <Route path="*" element={<Navigate to="/signin" replace />}></Route> */}
           </Routes>
 
           <EditProfilePopup
@@ -368,8 +333,6 @@ export default function App() {
             isOpen={isDeleteImagePopupOpen}
             onClose={closeAllPopups}
             onSubmit={handleCardDelete}
-            // onSubmit={handleDeletePlaceClick}
-            // onCardDelete={handleCardDelete}
           />
           <ImagePopup
             name="preview-image"
@@ -381,8 +344,7 @@ export default function App() {
           <InfoTooltip
             name="tooltip"
             isOpen={isInfoTooltipOpen}
-            // onClose={handleInfoTooltipClose}
-            onClose = {closeAllPopups}
+            onClose={closeAllPopups}
             isRegistered={isRegistered}
           />
 

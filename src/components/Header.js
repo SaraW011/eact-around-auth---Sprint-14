@@ -1,12 +1,12 @@
 import React from "react";
 import logo from "../images/logo.svg";
-import mobileMenuIcon from "../images/mobile-menu.svg";
+// import mobileMenuIcon from "../images/mobile-menu.svg";
 import { Link, useLocation } from "react-router-dom";
 
 function Header({
   props,
   isOpen,
-  loggdIn,
+  loggedIn,
   handleLogout,
   email,
   mobileMenu,
@@ -20,12 +20,10 @@ function Header({
         <img id="site-logo" src={logo} alt="Around the USA logo" />
       </Link>
 
-      {loggdIn ? (
+      {loggedIn ? (
         <div
           className="header__menu"
           // className={`header__menu ${isOpen && "header__mobile-menu"}`}
-          loggdIn={loggdIn}
-          handleLogout={handleLogout}
           email={email}
         >
           <h2 className="header__user-email">{email}</h2>
@@ -54,7 +52,7 @@ function Header({
 
       )}
 
-      {/* {loggdIn && showMobileIcon && <img
+      {/* {loggedIn && showMobileIcon && <img
         id="mobile-menu"
         className="header__mobile-menu"
         src={mobileMenuIcon}
