@@ -198,7 +198,8 @@ export default function App() {
     }
   }
 
-  function handleCardDelete() {
+  function handleCardDelete(evt) {
+    evt.preventDefault();
     api
       .deleteCard(selectedCard._id)
       .then(() => {
