@@ -54,6 +54,7 @@ export default function App() {
       .catch((err) => {
         console.log(err.status, err.statusText);
         setIsRegistered(false);
+        navigate.push("/signin");
       })
       .finally(() => {
         setIsInfoTooltipOpen(true);
@@ -85,14 +86,17 @@ export default function App() {
     auth
       .signin(email, password)
       .then((data) => {
-        if (data.token) {
-          localStorage.setItem("jwt", data.token);
+        if (data) {
+          const userData = {
+            email: email,
+            token: data,
+          };
+          // })
+          // .then(() => {
+          setUserData(userData);
+          setLoggedIn(true);
+          navigate.push("/");
         }
-      })
-      .then(() => {
-        setUserData(userData);
-        setLoggedIn(true);
-        navigate.push("/");
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
@@ -110,7 +114,7 @@ export default function App() {
   function handleLogout() {
     localStorage.removeItem("jwt");
     setLoggedIn(false);
-    navigate("/signin");
+    navigate.push("/signin");
   }
 
   // function handleMobileMenu() {
@@ -247,9 +251,7 @@ export default function App() {
     setIsEditAvatarPopupOpen(false);
     setIsPreviewImageOpen(false);
     setIsDeleteImagePopupOpen(false);
-
     setIsInfoTooltipOpen(false);
-
     setSelectedCard({});
 
     // setMobileMenu(false);
@@ -289,19 +291,19 @@ export default function App() {
 
             {loggedIn ? (
               <Route
+                path="/"
                 element={
-                  <ProtectedRoute
-                    path="/"
-                    loggedIn={loggedIn}
-                    component={Main}
-                    onEditProfileClick={handleEditProfileClick}
-                    onAddPlaceClick={handleAddPlaceClick}
-                    onEditAvatarClick={handleEditAvatarClick}
-                    onCardClick={handleCardClick}
-                    cards={cards}
-                    onCardLike={handleCardLike}
-                    onCardDelete={handleDeletePlaceClick}
-                  ></ProtectedRoute>
+                  <ProtectedRoute loggedIn={loggedIn}>
+                    <Main
+                      onEditProfileClick={handleEditProfileClick}
+                      onAddPlaceClick={handleAddPlaceClick}
+                      onEditAvatarClick={handleEditAvatarClick}
+                      onCardClick={handleCardClick}
+                      cards={cards}
+                      onCardLike={handleCardLike}
+                      onCardDelete={handleDeletePlaceClick}
+                    />
+                  </ProtectedRoute>
                 }
               />
             ) : (
@@ -311,8 +313,9 @@ export default function App() {
               ></Route>
             )}
 
-            {/* <Route path="*" element={<Navigate to="/signin" replace />}></Route> */}
-          </Routes>
+            <Route path="*" 
+            element={<Navigate to="/" />} />
+            </Routes>
 
           <EditProfilePopup
             isOpen={isEditProfilePopupOpen}
