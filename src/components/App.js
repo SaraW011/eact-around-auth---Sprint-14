@@ -293,7 +293,10 @@ export default function App() {
               <Route
                 path="/"
                 element={
-                  <ProtectedRoute loggedIn={loggedIn}>
+                  <ProtectedRoute 
+                  loggedIn={loggedIn}
+                  email={userData.email}
+                  >
                     <Main
                       onEditProfileClick={handleEditProfileClick}
                       onAddPlaceClick={handleAddPlaceClick}
@@ -313,8 +316,10 @@ export default function App() {
               ></Route>
             )}
 
-            <Route path="*" 
-            element={<Navigate to="/" />} />
+            <Route path="/" 
+            element={<Navigate to="signup" />} 
+            />
+
             </Routes>
 
           <EditProfilePopup
