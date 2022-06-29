@@ -89,7 +89,7 @@ export default function App() {
         //keep user logged in, ref to token Bearer
         if (data.token) {
           localStorage.setItem("jwt", data.token);
-          //set email on reroute to main:
+        //set email on reroute to main:
           const userData = {
             email: email,
           };
@@ -130,7 +130,7 @@ export default function App() {
     api
       .getData()
       .then((data) => {
-        if (data.email) {
+        if (data) {
           setCurrentUser(data);
         }
       })
