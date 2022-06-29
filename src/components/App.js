@@ -93,7 +93,9 @@ export default function App() {
           const userData = {
             email: email,
           };
-          setUserData(userData);
+          setUserData(userData); 
+          setLoggedIn(true);
+          navigate('/');
         }
       })
       .then(() => {

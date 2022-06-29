@@ -8,7 +8,7 @@ export default function EditAvatarPopup(props) {
     // clear the input:
     React.useEffect(() => {
       avatarRef.current.value = '';
-    }, [props.isOpen]);
+    }, []);
 
   function handleSubmit(e) {
     e.preventDefault();
