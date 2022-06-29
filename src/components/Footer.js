@@ -4,7 +4,7 @@ function Footer() {
     return (
       <footer className="footer">
         <p className="footer__copyright">
-        &copy; 2022 Sara Weissman
+        &copy; {new Date().getFullYear()} Sara Weissman
         </p>
       </footer>
     );

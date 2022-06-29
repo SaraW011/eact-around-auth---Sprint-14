@@ -11,7 +11,7 @@ export default function Register(props) {
       console.log("could not register");
       return;
     }
-    props.handleRegistration(email, password);
+    props.onSubmit(email, password);
   };
 
   const handleEmail = (evt) => {
@@ -30,7 +30,7 @@ export default function Register(props) {
           className="login__input"
           name="email"
           placeholder="Email"
-          required
+          // required
           type="email"
           value={email}
           onChange={handleEmail}
@@ -39,7 +39,7 @@ export default function Register(props) {
           className="login__input"
           name="password"
           placeholder="Password"
-          required
+          // required
           type="password"
           value={password}
           onChange={handlePassword}

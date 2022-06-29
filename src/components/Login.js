@@ -11,7 +11,7 @@ export default function Login(props) {
       console.log("could not log in");
       return;
     }
-    props.handleLogin(email, password);
+      props.onSubmit(email, password);
   };
 
   const handleEmail = (evt) => {
@@ -27,7 +27,7 @@ export default function Login(props) {
       <p className="login__title">Welcome back!</p>
       <form onSubmit={handleSubmit} className="login__form">
         <input
-          required
+          // required
           className="login__input"
           id="email"
           name="email"
@@ -37,7 +37,7 @@ export default function Login(props) {
           onChange={handleEmail}
         />
         <input
-          required
+          // required
           className="login__input"
           id="password"
           name="password"

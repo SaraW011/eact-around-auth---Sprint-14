@@ -6,6 +6,7 @@ export default function PopupWithForm(props) {
       className={`modal modal_type_${props.name} ${
         props.isOpen && "modal_open"
       }`}
+       onClick={props.handleOverlay}
     >
       <div className="modal__container">
         <button
@@ -29,8 +30,7 @@ export default function PopupWithForm(props) {
             type="submit"
             className={`form__button form__button_type-${props.name}`}
             aria-label="delete-button"
-            // onClick={props.onClose} //>> triggers avatarRef useEffect >>
-            //use method closeAllPopups in App instead
+            onClick={props.onClose}
           >
             {" "}
             {props.buttonText}

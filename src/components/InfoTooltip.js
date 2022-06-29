@@ -2,7 +2,7 @@ import React from "react";
 import vSign from "../images/vSign.svg";
 import xSign from "../images/xSign.svg";
 
-export default function InfoTooltip(props, isRegistered) {
+export default function InfoTooltip(props) {
   return (
     <div
       className={`modal modal_type_${props.name} ${
@@ -17,7 +17,7 @@ export default function InfoTooltip(props, isRegistered) {
           className="modal__close-button"
           onClick={props.onClose}
         ></button>
-        {isRegistered ? 
+        {props.isRegistered ? 
           <>
             <img
               src={vSign}
@@ -33,7 +33,7 @@ export default function InfoTooltip(props, isRegistered) {
               src={xSign}
               alt="failure"
             ></img>
-            <h2 className={"modal__title"}>
+            <h2 className={"modal__title_type_tooltip"}>
               Oops, something went wrong! Please try again.
             </h2>
           </>

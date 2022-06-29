@@ -54,7 +54,6 @@ export default function App() {
       .catch((err) => {
         console.log(err.status, err.statusText);
         setIsRegistered(false);
-        navigate.push("/signin");
       })
       .finally(() => {
         setIsInfoTooltipOpen(true);
@@ -73,8 +72,9 @@ export default function App() {
               email: res.data.email,
               id: res.data._id,
             };
-            setLoggedIn(true);
             setUserData(data);
+            setLoggedIn(true);
+            navigate.push("/");
           }
         })
         .catch((err) => console.error(err.status, err.statusText));
@@ -86,21 +86,21 @@ export default function App() {
     auth
       .signin(email, password)
       .then((data) => {
-        if (data) {
+        //keep user logged in, ref to token Bearer
+        if (data.token) {
+          localStorage.setItem("jwt", data.token);
+          //set email on reroute to main:
           const userData = {
             email: email,
-            token: data,
           };
-          // })
-          // .then(() => {
           setUserData(userData);
-          setLoggedIn(true);
-          navigate.push("/");
         }
+      })
+      .then(() => {
+        navigate.push("/");
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
-        setIsRegistered(false);
       });
   }
 
@@ -130,7 +130,9 @@ export default function App() {
     api
       .getData()
       .then((data) => {
-        setCurrentUser(data);
+        if (data.email) {
+          setCurrentUser(data);
+        }
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
@@ -174,27 +176,38 @@ export default function App() {
       });
   }
 
+  function toggleLike(card) {
+    setCards((state) =>
+      state.map((currentCard) =>
+        currentCard._id === card._id ? card : currentCard
+      )
+    );
+  }
+
   function handleCardLike(card) {
     // Check one more time if this card was already liked
-    const isLiked = card.likes.some((user) => user._id === currentUser._id);
-
-    // Send a request to the API and get updated card data
+    const isLiked = card.likes.some(
+      (user) => user._id.toString() === currentUser._id
+    );
     if (!isLiked) {
-      api.likeCard(card._id, !isLiked).then((newCard) => {
-        setCards((state) =>
-          state.map((currentCard) =>
-            currentCard._id === card._id ? newCard : currentCard
-          )
-        );
-      });
+      api
+        .likeCard(card._id.toString())
+        .then((card) => {
+          toggleLike(card);
+        })
+        //catch err at the very end of any server request:
+        .catch((err) => {
+          console.log(err.status, err.statusText);
+        });
     } else {
-      api.dislikeCard(card._id).then((newCard) => {
-        setCards((state) =>
-          state.map((currentCard) =>
-            currentCard._id === card._id ? newCard : currentCard
-          )
-        );
-      });
+      api
+        .dislikeCard(card._id.toString())
+        .then((card) => {
+          toggleLike(card);
+        })
+        .catch((err) => {
+          console.log(err.status, err.statusText);
+        });
     }
   }
 
@@ -287,41 +300,38 @@ export default function App() {
           <Routes>
             <Route
               path="/signup"
-              element={<Register handleRegistration={handleRegistration} />}
+              element={<Register onSubmit={handleRegistration} />}
             ></Route>
 
-            {loggedIn ? (
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute 
-                  loggedIn={loggedIn}
-                  email={userData.email}
-                  >
-                    <Main
-                      onEditProfileClick={handleEditProfileClick}
-                      onAddPlaceClick={handleAddPlaceClick}
-                      onEditAvatarClick={handleEditAvatarClick}
-                      onCardClick={handleCardClick}
-                      cards={cards}
-                      onCardLike={handleCardLike}
-                      onCardDelete={handleDeletePlaceClick}
-                    />
-                  </ProtectedRoute>
-                }
-              />
-            ) : (
-              <Route
-                path="/signin"
-                element={<Login handleLogin={handleLogin} />}
-              ></Route>
-            )}
+            <Route
+              path="/signin"
+              element={<Login onSubmit={handleLogin} />}
+            ></Route>
 
-            <Route path="/" 
-            element={<Navigate to="signup" />} 
+            <Route
+              exact
+              path="/"
+              loggedIn={loggedIn}
+              element={
+                <ProtectedRoute 
+                loggedIn={loggedIn} 
+                email={userData.email}
+                >
+                  <Main
+                    onEditProfileClick={handleEditProfileClick}
+                    onAddPlaceClick={handleAddPlaceClick}
+                    onEditAvatarClick={handleEditAvatarClick}
+                    onCardClick={handleCardClick}
+                    cards={cards}
+                    onCardLike={handleCardLike}
+                    onCardDelete={handleDeletePlaceClick}
+                  />
+                </ProtectedRoute>
+              }
             />
 
-            </Routes>
+            <Route path="*" element={<Navigate to="signup" />} />
+          </Routes>
 
           <EditProfilePopup
             isOpen={isEditProfilePopupOpen}

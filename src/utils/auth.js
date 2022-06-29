@@ -12,23 +12,23 @@ class Auth {
     }
   }
 
-  signup = (email, password) => {
+  signup(email, password) {
     return fetch(`${this._BASE_URL}/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({email: email, password: password}),
     }).then(this.checkResponse);
   };
 
-  signin = (email, password) => {
+  signin(email, password) {
     return fetch(`${this._BASE_URL}/signin`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({email: email, password: password}),
     })
       .then(this.checkResponse)
       .then((data) => {
@@ -37,7 +37,7 @@ class Auth {
       });
   };
 
-  getToken = (token) => {
+  getToken(token) {
     return fetch(`${this._BASE_URL}/users/me`, {
       method: "GET",
       headers: {
