@@ -53,6 +53,7 @@ export default function App() {
         }
       })
       .then(() => {
+        setLoggedIn(true);
         navigate.push("/");
       })
       .catch((err) => {
@@ -310,6 +311,7 @@ export default function App() {
                 email={userData.email}
                 >
                   <Main
+                    loggedIn={loggedIn} 
                     onEditProfileClick={handleEditProfileClick}
                     onAddPlaceClick={handleAddPlaceClick}
                     onEditAvatarClick={handleEditAvatarClick}

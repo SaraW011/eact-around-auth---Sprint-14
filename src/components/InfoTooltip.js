@@ -1,13 +1,18 @@
 import React from "react";
 import vSign from "../images/vSign.svg";
 import xSign from "../images/xSign.svg";
+import Popup from "./Popup";
 
 export default function InfoTooltip(props) {
   return (
-    <div
-      className={`modal modal_type_${props.name} ${
-        props.isOpen && "modal_open"
-      }`}
+    // <div
+    //   className={`modal modal_type_${props.name} ${
+    //     props.isOpen && "modal_open"
+    //   }`}
+    <Popup
+    onClose={props.onClose} 
+    isOpen={props.isOpen}
+    name={props.name}
     >
 
       <div className={"modal__container"}>
@@ -39,6 +44,7 @@ export default function InfoTooltip(props) {
           </>
         }
       </div>
-    </div>
-  );
+      </Popup>
+      // </div>
+      );
 }
