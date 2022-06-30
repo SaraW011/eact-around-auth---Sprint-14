@@ -14,7 +14,7 @@ export default function EditAvatarPopup(props) {
     e.preventDefault();
 
     props.onUpdateAvatar({
-      avatar: avatarRef.current.value,
+      avatar: avatarRef.current.value
     });
   }
 
@@ -34,7 +34,7 @@ export default function EditAvatarPopup(props) {
         className="form__input form__input_type_link"
         placeholder="avatar link"
         name="link"
-        required
+        // required
       />
       <span id="input_type_avatar-url-error" className="form__error"></span>
     </PopupWithForm>

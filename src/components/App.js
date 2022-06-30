@@ -65,7 +65,7 @@ export default function App() {
     const jwt = localStorage.getItem("jwt");
     if (jwt) {
       auth
-        .getToken(jwt)
+        .checkToken(jwt)
         .then((res) => {
           if (res) {
             const data = {
@@ -272,19 +272,6 @@ export default function App() {
 
     // setMobileMenu(false);
   }
-
-  React.useEffect(() => {
-    // code on mount
-    const handleEscClose = (event) => {
-      if (event.key === "Escape") {
-        closeAllPopups();
-      }
-    };
-
-    document.addEventListener("keydown", handleEscClose);
-    // code on unmount
-    return () => document.removeEventListener("keydown", handleEscClose);
-  }, []); // dependencies array
 
   //**----------->> RENDER <<-------------------*/
   return (

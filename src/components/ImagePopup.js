@@ -1,13 +1,13 @@
 import React from "react";
+import Popup from "./Popup";
 
 export default function ImagePopup(props) {
   return (
-      <div
-      className={`modal modal_type_${props.name} ${
-        props.isOpen && "modal_open"
-      }`}
+    <Popup 
+    onClose={props.onClose}
+    isOpen={props.isOpen} 
+    name={props.name}
     >
-
       <div className="modal__image-wrapper">
         <button
           type="button"
@@ -17,14 +17,16 @@ export default function ImagePopup(props) {
         ></button>
 
         <figure>
-          <img 
-          src={props.imageLink}
-          alt={props.imageText} 
-          className="modal__image-container" 
+          <img
+            src={props.imageLink}
+            alt={props.imageText}
+            className="modal__image-container"
           />
-            <figcaption className="modal__image-caption">{props.imageText}</figcaption>
+          <figcaption className="modal__image-caption">
+            {props.imageText}
+          </figcaption>
         </figure>
       </div>
-    </div>
+    </Popup>
   );
 }

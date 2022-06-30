@@ -37,7 +37,7 @@ class Auth {
       });
   };
 
-  getToken(token) {
+  checkToken(token) {
     return fetch(`${this._BASE_URL}/users/me`, {
       method: "GET",
       headers: {
