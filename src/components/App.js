@@ -46,14 +46,17 @@ export default function App() {
     auth
       .signup(email, password)
       .then((res) => {
-        if (res.email === email) {
+        if (res) {
           setIsRegistered(true);
-          navigate.push("/");
+        } else {
+          setIsRegistered(false);
         }
+      })
+      .then(() => {
+        navigate.push("/");
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
-        setIsRegistered(false);
       })
       .finally(() => {
         setIsInfoTooltipOpen(true);

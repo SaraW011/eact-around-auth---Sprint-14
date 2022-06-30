@@ -21,7 +21,8 @@ export default function PopupWithForm(props) {
     //   }`}
     // >
     <Popup
-      onClick={props.handleOverlay}
+      // onClick={props.handleOverlay}
+      // onClose={props.handleOverlay} 
       onClose={props.onClose} 
       isOpen={props.isOpen}
       name ={props.name}

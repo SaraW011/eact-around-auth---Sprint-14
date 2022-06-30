@@ -20,15 +20,13 @@ export default function Popup({ name, isOpen, onClose,  children, handleOverlay 
   }, [isOpen, onClose]);
 
 
-  // // overlay handler
+  // // overlay handler 
   // React.useEffect(() => {
-  //   // if (!isOpen) return;
+  //   if (!isOpen) return;
   //   function handleOverlay(e){
   //     e.stopPropagation();
   //     if (   
   //       e.target === e.currentTarget 
-  //     //   e.target.classList.contains("modal_open") ||
-  //     // e.target.classList.contains(`modal__container`)
   //     ) {
   //       onClose();
   //     }
@@ -46,6 +44,7 @@ export default function Popup({ name, isOpen, onClose,  children, handleOverlay 
           isOpen && "modal_open"
         }`}
       // onClose={handleOverlay}
+      onClose={onClose}
     >
       {children}
     </div>
