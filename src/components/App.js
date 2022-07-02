@@ -54,7 +54,7 @@ export default function App() {
       })
       .then(() => {
         setLoggedIn(true);
-        navigate.push("/");
+        navigate("/");
       })
       .catch((err) => {
         console.log(err.status, err.statusText);
@@ -101,9 +101,6 @@ export default function App() {
           setLoggedIn(true);
           navigate('/');
         }
-      })
-      .then(() => {
-        navigate.push("/");
       })
       .catch((err) => {
         console.log(err.status, err.statusText);

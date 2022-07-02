@@ -8,7 +8,9 @@ export default function ImagePopup(props) {
     isOpen={props.isOpen} 
     name={props.name}
     >
-      <div className="modal__image-wrapper">
+      <div className="modal__image-wrapper" 
+      // onClick={props.onClose}
+      >
         <button
           type="button"
           aria-label="close-button"

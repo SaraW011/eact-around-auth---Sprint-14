@@ -1,33 +1,27 @@
 import React from "react";
 import Popup from "./Popup";
 
-//to easily handle forms make custom hook: 
+// to easily handle forms make custom hook 
+// (credit Gennadiy Barsegyan reviewer):
+
 // export function useForm(inputValues) {
-//   const [values, setValues] = useState(inputValues);
+
+//   const [values, setValues] = React.useState(inputValues);
 
 //   const handleChange = (event) => {
 //     const {value, name} = event.target;
 //     setValues({...values, [name]: value});
 //   };
 //   return {values, handleChange, setValues};
-// }
-
+// } 
 
 export default function PopupWithForm(props) {
   return (
-    // <div
-    //   className={`modal modal_type_${props.name} ${
-    //     props.isOpen && "modal_open"
-    //   }`}
-    // >
     <Popup
-      // onClick={props.handleOverlay}
-      // onClose={props.handleOverlay} 
-      onClose={props.onClose} 
+      onClose={props.onClose}
       isOpen={props.isOpen}
-      name ={props.name}
-      >
-
+      name={props.name}
+    >
       <div className="modal__container">
         <button
           type="button"
@@ -51,15 +45,12 @@ export default function PopupWithForm(props) {
             type="submit"
             className={`form__button form__button_type-${props.name}`}
             aria-label="delete-button"
-            onClick={props.onClose}
           >
             {" "}
             {props.buttonText}
           </button>
         </form>
       </div>
-          </Popup>
-
-    // </div>
+    </Popup>
   );
 }

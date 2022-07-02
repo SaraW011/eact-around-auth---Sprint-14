@@ -1,7 +1,13 @@
 import React from "react";
 
-export default function Popup({ name, isOpen, onClose,  children, handleOverlay }) {
-  // `useEffect` for the `Escape` listener
+export default function Popup({
+  name,
+  isOpen,
+  onClose,
+  children,
+  // handleOverlay,
+}) {
+  // `useEffect` for the `Escape` listener:
   React.useEffect(() => {
     // prevent adding the listener if the popup is not opened
     if (!isOpen) return;
@@ -19,32 +25,25 @@ export default function Popup({ name, isOpen, onClose,  children, handleOverlay 
     // dependencies array add the listener only when it’s opened:
   }, [isOpen, onClose]);
 
-
-  // // overlay handler 
+  // // improve for use -> make wrapper block
   // React.useEffect(() => {
   //   if (!isOpen) return;
-  //   function handleOverlay(e){
+  //   function handleOverlay(e) {
   //     e.stopPropagation();
-  //     if (   
-  //       e.target === e.currentTarget 
-  //     ) {
+  //     if (e.target === e.currentTarget) {
   //       onClose();
   //     }
-  //   };
+  //   }
 
   //   document.addEventListener("click", handleOverlay);
   //   return () => document.removeEventListener("click", handleOverlay);
-  // }, [isOpen, onClose]);
-
+  // }, []);
 
   // add main wrapper with class `modal` and `modal_open`
   return (
     <div
-    className={`modal modal_type_${name} ${
-          isOpen && "modal_open"
-        }`}
-      // onClose={handleOverlay}
-      onClose={onClose}
+      className={`modal ${isOpen ? "modal_open" : ""} modal_type_${name}`}
+      // onClick={handleOverlay}
     >
       {children}
     </div>
